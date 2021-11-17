@@ -33,8 +33,7 @@ impl Terminal for DefaultTerminal {
 	
 	fn get_output(&mut self) -> Vec<u8> {
 		let mut buffer: Vec<u8> = Vec::new();
-		let mut len = 64;
-		while len > 0 {
+		loop {
 			let top = self.output_data.pop();
 			match top {
 				None => {
@@ -44,7 +43,6 @@ impl Terminal for DefaultTerminal {
 					buffer.push(d);
 				}
 			}
-			len = len - 1;
 		}
 		buffer.reverse();
 		buffer
