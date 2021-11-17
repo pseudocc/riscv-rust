@@ -73,10 +73,9 @@ impl VirtioBlockDisk {
 	/// # Arguments
 	/// * `contents` filesystem content binary
 	pub fn init(&mut self, contents: Vec<u8>) {
-		// @TODO: Optimize
-		for _i in 0..((contents.len() + 7) / 8) {
-			self.contents.push(0);
-		}
+		let size = (contents.len() + 7) / 8;
+		self.contents = vec![0; size];
+
 		for i in 0..contents.len() {
 			let index = (i >> 3) as usize;
 			let pos = (i % 8) * 8;
