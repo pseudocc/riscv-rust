@@ -10,6 +10,24 @@
     </style>
   </head>
   <body>
+    <script>
+      let dumpfs;
+      let fsBuffer;
+      let wasm;
+
+      const downloadFile = (blob, fileName) => {
+        const link = document.createElement('a');
+        // create a blobURI pointing to our Blob
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        // some browser needs the anchor to be in the doc
+        document.body.append(link);
+        link.click();
+        link.remove();
+        // in case the Blob uses a lot of memory
+        setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+      };
+    </script>
     <script type="module">
       import App from './App.js';
       import init, { WasmRiscv } from "./riscv_emu_rust_wasm.js";
@@ -18,11 +36,10 @@
       const COLUMNS = 80;
       const MINIMUM_ROWS = 24;
 
-      let wasm;
-
       const runButton = document.getElementById('run-button');
-	  const fileSelect = document.getElementById('file-select');
-	  const debuggerCheckbox = document.getElementById('debugger-checkbox');
+      const dumpButton = document.getElementById('dump-button');
+      const fileSelect = document.getElementById('file-select');
+      const debuggerCheckbox = document.getElementById('debugger-checkbox');
 
       const terminal = new Terminal();
       terminal.setOption('cursorBlink', true);
@@ -74,6 +91,8 @@
         } else {
           app.run();
         }
+
+        return riscv.dump_filesystem.bind(riscv);
       };
 
       // From https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-fit
@@ -147,7 +166,6 @@
         const elfResponse = await fetch(resourcePath + filename);
         const elfBuffer = await elfResponse.arrayBuffer();
 
-        let fsBuffer;
         let symbolBuffer;
 
         if (isLinux) {
@@ -173,7 +191,8 @@
 
         terminal.writeln('Done downloading.');
 
-        run(elfBuffer, fsBuffer, symbolBuffer, true);
+        dumpfs = await run(elfBuffer, fsBuffer, symbolBuffer, true);
+        console.log(dumpfs);
       };
 
       init()
@@ -190,6 +209,7 @@
       <option value="linux/bbl/bbl">Linux + Legacy BBL</option>
       <option value="xv6/kernel">xv6 (tiny OS)</option>
     </select>
+    <button id="dump-button" disabled>Dump</button>
     <button id="run-button" disabled>Run</button>
     <input id="debugger-checkbox" type="checkbox" disabled>Debugger</input>
     <div id="terminal"></div>

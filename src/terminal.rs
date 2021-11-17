@@ -8,7 +8,7 @@ pub trait Terminal {
 
 	/// Gets an output ascii byte data from output buffer.
 	/// This method returns zero if the buffer is empty.
-	fn get_output(&mut self) -> u8;
+	fn get_output(&mut self) -> Vec<u8>;
 
 	/// Puts an input ascii byte data to input buffer.
 	/// The data is expected to be read by `Emulator` via `get_input()`
@@ -33,5 +33,5 @@ impl Terminal for DummyTerminal {
 	fn put_byte(&mut self, _value: u8) {}
 	fn get_input(&mut self) -> u8 { 0 }
 	fn put_input(&mut self, _value: u8) {}
-	fn get_output(&mut self) -> u8 { 0 }
+	fn get_output(&mut self) -> Vec<u8> { vec![] }
 }

@@ -84,6 +84,17 @@ impl VirtioBlockDisk {
 		}
 	}
 
+	pub fn dump(&mut self) -> Vec<u8> {
+    let mut buffer: Vec<u8> = Vec::new();
+    for index in 0..self.contents.len() {
+      for posi in 0..8 {
+        let pos = posi * 8;
+        buffer.push(((self.contents[index] & (0xff << pos)) >> pos) as u8);
+      }
+    }
+    buffer
+	}
+
 	/// Runs one cycle. Data transfer between main memory and block device
 	/// can happen depending on condition.
 	///

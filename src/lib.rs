@@ -263,6 +263,10 @@ impl Emulator {
 		self.cpu.get_mut_mmu().init_disk(content);
 	}
 
+	pub fn dump_filesystem(&mut self) -> Vec<u8> {
+		self.cpu.get_mut_mmu().dump_disk()
+	}
+
 	/// Sets up device tree. The emulator has default device tree configuration.
 	/// If you want to override it, use this method. This method is expected to
 	/// to be called up to only once.

@@ -138,6 +138,10 @@ impl Mmu {
 		self.disk.init(data);
 	}
 
+	pub fn dump_disk(&mut self) -> Vec<u8> {
+		self.disk.dump()
+	}
+
 	/// Overrides defalut Device tree configuration.
 	///
 	/// # Arguments

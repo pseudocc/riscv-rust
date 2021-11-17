@@ -89,6 +89,11 @@ impl WasmRiscv {
 		self.emulator.setup_filesystem(content);
 	}
 
+	/// Some non-sense annotations
+	pub fn dump_filesystem(&mut self) -> Vec<u8> {
+		self.emulator.dump_filesystem()
+	}
+
 	/// Sets up device tree. The emulator has default device tree configuration.
 	/// If you want to override it, use this method. This method is expected to
 	/// to be called up to only once.
@@ -235,7 +240,7 @@ impl WasmRiscv {
 	///   }
 	/// }
 	/// ```
-	pub fn get_output(&mut self) -> u8 {
+	pub fn get_output(&mut self) -> Vec<u8> {
 		self.emulator.get_mut_terminal().get_output()
 	}
 

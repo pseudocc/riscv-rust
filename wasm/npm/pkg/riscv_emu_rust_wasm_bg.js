@@ -27,6 +27,18 @@ function passArray8ToWasm0(arg, malloc) {
     return ptr;
 }
 
+let cachegetInt32Memory0 = null;
+function getInt32Memory0() {
+    if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
+        cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
+    }
+    return cachegetInt32Memory0;
+}
+
+function getArrayU8FromWasm0(ptr, len) {
+    return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
 let cachegetUint64Memory0 = null;
 function getUint64Memory0() {
     if (cachegetUint64Memory0 === null || cachegetUint64Memory0.buffer !== wasm.memory.buffer) {
@@ -45,14 +57,6 @@ function passArray64ToWasm0(arg, malloc) {
 const u32CvtShim = new Uint32Array(2);
 
 const uint64CvtShim = new BigUint64Array(u32CvtShim.buffer);
-
-let cachegetInt32Memory0 = null;
-function getInt32Memory0() {
-    if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
-        cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
-    }
-    return cachegetInt32Memory0;
-}
 
 const lTextEncoder = typeof TextEncoder === 'undefined' ? (0, module.require)('util').TextEncoder : TextEncoder;
 
@@ -160,10 +164,15 @@ export class WasmRiscv {
         return obj;
     }
 
-    free() {
+    __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
 
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
         wasm.__wbg_wasmriscv_free(ptr);
     }
     /**
@@ -212,6 +221,23 @@ export class WasmRiscv {
         var ptr0 = passArray8ToWasm0(content, wasm.__wbindgen_malloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.wasmriscv_setup_filesystem(this.ptr, ptr0, len0);
+    }
+    /**
+    * Some non-sense annotations
+    * @returns {Uint8Array}
+    */
+    dump_filesystem() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.wasmriscv_dump_filesystem(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v0 = getArrayU8FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 1);
+            return v0;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
     }
     /**
     * Sets up device tree. The emulator has default device tree configuration.
@@ -307,8 +333,7 @@ export class WasmRiscv {
     */
     load_doubleword(address, error) {
         try {
-            const retptr = wasm.__wbindgen_export_1.value - 16;
-            wasm.__wbindgen_export_1.value = retptr;
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             uint64CvtShim[0] = address;
             const low0 = u32CvtShim[0];
             const high0 = u32CvtShim[1];
@@ -322,7 +347,7 @@ export class WasmRiscv {
             const n2 = uint64CvtShim[0];
             return n2;
         } finally {
-            wasm.__wbindgen_export_1.value += 16;
+            wasm.__wbindgen_add_to_stack_pointer(16);
             error.set(getUint8Memory0().subarray(ptr1 / 1, ptr1 / 1 + len1));
             wasm.__wbindgen_free(ptr1, len1 * 1);
         }
@@ -337,8 +362,7 @@ export class WasmRiscv {
     */
     read_register(reg) {
         try {
-            const retptr = wasm.__wbindgen_export_1.value - 16;
-            wasm.__wbindgen_export_1.value = retptr;
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             wasm.wasmriscv_read_register(retptr, this.ptr, reg);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -347,7 +371,7 @@ export class WasmRiscv {
             const n0 = uint64CvtShim[0];
             return n0;
         } finally {
-            wasm.__wbindgen_export_1.value += 16;
+            wasm.__wbindgen_add_to_stack_pointer(16);
         }
     }
     /**
@@ -356,8 +380,7 @@ export class WasmRiscv {
     */
     read_pc() {
         try {
-            const retptr = wasm.__wbindgen_export_1.value - 16;
-            wasm.__wbindgen_export_1.value = retptr;
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             wasm.wasmriscv_read_pc(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -366,7 +389,7 @@ export class WasmRiscv {
             const n0 = uint64CvtShim[0];
             return n0;
         } finally {
-            wasm.__wbindgen_export_1.value += 16;
+            wasm.__wbindgen_add_to_stack_pointer(16);
         }
     }
     /**
@@ -386,11 +409,20 @@ export class WasmRiscv {
     *   }
     * }
     * ```
-    * @returns {number}
+    * @returns {Uint8Array}
     */
     get_output() {
-        var ret = wasm.wasmriscv_get_output(this.ptr);
-        return ret;
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.wasmriscv_get_output(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v0 = getArrayU8FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 1);
+            return v0;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
     }
     /**
     * Puts ascii code byte sent from terminal to the emulator.
@@ -427,8 +459,7 @@ export class WasmRiscv {
     */
     get_address_of_symbol(s, error) {
         try {
-            const retptr = wasm.__wbindgen_export_1.value - 16;
-            wasm.__wbindgen_export_1.value = retptr;
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             var ptr0 = passStringToWasm0(s, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             var len0 = WASM_VECTOR_LEN;
             var ptr1 = passArray8ToWasm0(error, wasm.__wbindgen_malloc);
@@ -441,14 +472,14 @@ export class WasmRiscv {
             const n2 = uint64CvtShim[0];
             return n2;
         } finally {
-            wasm.__wbindgen_export_1.value += 16;
+            wasm.__wbindgen_add_to_stack_pointer(16);
             error.set(getUint8Memory0().subarray(ptr1 / 1, ptr1 / 1 + len1));
             wasm.__wbindgen_free(ptr1, len1 * 1);
         }
     }
 }
 
-export const __wbindgen_throw = function(arg0, arg1) {
+export function __wbindgen_throw(arg0, arg1) {
     throw new Error(getStringFromWasm0(arg0, arg1));
 };
 

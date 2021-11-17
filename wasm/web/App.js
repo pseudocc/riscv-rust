@@ -574,18 +574,11 @@ export default class App {
   }
 
   flush() {
-    const outputBytes = [];
-    while (true) {
-      const data = this.riscv.get_output();
-      if (data !== 0) {
-        outputBytes.push(data);
-      } else {
-        break;
-      }
-    }
-    if (outputBytes.length > 0) {
-      this.terminal.write(u8s_to_strings(outputBytes));
-    }
+    let data;
+    do {
+      data = this.riscv.get_output();
+      this.terminal.write(u8s_to_strings(data));
+    } while (data.length);
   }
 
   startDebugMode() {

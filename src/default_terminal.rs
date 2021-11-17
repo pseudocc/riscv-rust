@@ -31,10 +31,22 @@ impl Terminal for DefaultTerminal {
 		self.input_data.push(value);
 	}
 	
-	fn get_output(&mut self) -> u8 {
-		match self.output_data.len() > 0 {
-			true => self.output_data.remove(0),
-			false => 0
+	fn get_output(&mut self) -> Vec<u8> {
+		let mut buffer: Vec<u8> = Vec::new();
+		let mut len = 64;
+		while len > 0 {
+			let top = self.output_data.pop();
+			match top {
+				None => {
+					break;
+				},
+				Some(d) => {
+					buffer.push(d);
+				}
+			}
+			len = len - 1;
 		}
+		buffer.reverse();
+		buffer
 	}
 }

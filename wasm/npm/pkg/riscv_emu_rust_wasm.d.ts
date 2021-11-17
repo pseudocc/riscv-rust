@@ -78,6 +78,11 @@ export class WasmRiscv {
 */
   setup_filesystem(content: Uint8Array): void;
 /**
+* Some non-sense annotations
+* @returns {Uint8Array}
+*/
+  dump_filesystem(): Uint8Array;
+/**
 * Sets up device tree. The emulator has default device tree configuration.
 * If you want to override it, use this method. This method is expected to
 * to be called up to only once.
@@ -186,9 +191,9 @@ export class WasmRiscv {
 *   }
 * }
 * ```
-* @returns {number}
+* @returns {Uint8Array}
 */
-  get_output(): number;
+  get_output(): Uint8Array;
 /**
 * Puts ascii code byte sent from terminal to the emulator.
 *
